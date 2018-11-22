@@ -1,0 +1,42 @@
+Dim QCConnection,folder
+Set QCConnection = CreateObject("TDApiOle80.TDConnection")
+QCConnection.InitConnectionEx "******"
+QCConnection.login "UID","PWD"
+QCConnection.Connect "PROJECT", "DOMAIN"
+
+
+Set TreeManager = QCConnection.TestSetTreeManager
+Set root = TreeManager.Root
+Set folder1 =TreeManager.NodeByPath("Path in Testlab") ' name of the parent folder under which you need to create the new fodler
+folder1.AddNode("Folder name")' name of the Test Set Folder 'create new folder
+
+
+Set QCTreeManager=QCConnection.TreeManager
+Set folder=QCTreeManager.nodebypath("Path in test plan")
+Set TestFact = folder.TestFactory
+Set TestsList = TestFact.NewList("")
+   
+   
+Set QCTSTreeManager = QCConnection.TestSetTreeManager    
+Set  TreeNode=QCTSTreeManager.NodebyPath("path in test lab")
+Set TestSetFact=TreeNode.TestSetFactory
+   
+Set NewTestSet=TestSetFact.AddItem(Null)' Creates new testset
+NewTestSet.name="example1"
+NewTestSet.Field("CY_COMMENT")=testSetName
+NewTestSet.status="Open"
+    NewTestSet.post
+   
+    Set TSTestFactory=NewTestSet.TSTestFactory
+    For Each Tests in TestsList
+        If Tests.field("TS_TYPE")= "MANUAL" Then
+            TSTestFactory.Additem(tests)
+        End If
+    Next
+
+Set Excel = Nothing
+Set QCConnection = Nothing
+
+MsgBox "Project data download complete."
+
+----
